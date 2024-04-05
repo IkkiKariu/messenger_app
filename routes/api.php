@@ -27,6 +27,6 @@ Route::prefix('/messages')->group(function() {
     Route::get('/index', [MessageController::class, 'index'])->name('messages.index');
     Route::get('/auth', [MessageController::class, 'auth'])->name('messages.auth')->middleware('auth:sanctum');
     Route::post('/create', [MessageController::class, 'store'])->name('messages.create.store')->middleware('auth:sanctum');
-    Route::post('/reply', [MessageController::class, 'store'])->name('messages.create.store');
+    Route::post('/reply', [MessageController::class, 'reply'])->name('messages.create.reply')->middleware('auth:sanctum');
 });
 
