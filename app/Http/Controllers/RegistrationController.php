@@ -16,25 +16,43 @@ class RegistrationController extends Controller
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|min:4|max:25',
-            'password' => 'required|min:4',
-            'password_confirmation' => 'required|same:password',
-            'email' => 'required|email'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect(route('register.index'));
+        $reqContent = $request->json()->all();
+        
+        if(!$this->validateRequset($reqContent))
+        {
+            return json_encode(['error' => 'registration failed']);
         }
-
-        $validated = $validator->validated();
-
+        
         $user = new User();
-        $user->name = $validated['name'];
-        $user->email = $validated['email'];
-        $user->password = $validated['password'];
+        $user->name = $reqContent['name'];
+        $user->email = $reqContent['email'];
+        $user->password = $reqContent['password'];
         $user->save();
         
-        // return $validator->validated();
+        return json_encode(['success' => 'registration completed']);
+    }
+
+    private function validateRequset($content) : bool
+    {
+        $desiredData = ['name', 'password', 'password_confirmation', 'email'];
+        $actualData = array_keys($content);
+
+        if (array_diff($desiredData, $actualData) == []) 
+        {
+            $validator = Validator::make($content, [
+                'name' => 'required|min:4|max:25',
+                'password' => 'required|min:4',
+                'password_confirmation' => 'required',
+                'email' => 'required|email'
+            ]);
+    
+            if ($validator->fails()) {
+                return false;
+            }
+
+            return true;
+        } 
+        
+        return false;
     }
 }

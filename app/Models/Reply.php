@@ -12,10 +12,15 @@ class Reply extends Model
     use HasFactory;
 
     protected $table = 'replies';
-    protected $timestamps = false;
+    public $timestamps = false;
 
     public function message(): HasOne
     {
         return $this->hasOne(Message::class, 'id', 'source_id');
     }
+
+    // public function creator(): HasOne
+    // {
+    //     return $this->hasOne(User::class, 'id', 'source_id');
+    // }
 }
